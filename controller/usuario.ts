@@ -8,51 +8,46 @@ export const getUsuarios = async (req: Request, resp: Response) => {
 
 export const getUsuario = async (req: Request, resp: Response) => {
   const { id } = req.params;
-  const usuarios = await Usuario.findByPk(id);
-
-  if (usuarios) {
+  const usuario = await Usuario.findByPk(id);
+console.log(usuario);
+  if (usuario) {
     resp.json({
       msg: "getUsuario",
-      usuarios,
+      usuario,
     });
   } else {
     resp.status(404).json({
       msg: "Not user found by id",
-      usuarios,
+      usuario,
     });
   }
 };
 
 export const postUsuario = async (req: Request, resp: Response) => {
   const { body } = req;
-
   try {
-    const existemail = Usuario.findOne({
+    const existemail = await Usuario.findOne({
       where: {
         email: body.email,
       },
     });
-
+    
     if (existemail) {
       return resp.status(400).json({
-        msg: "There is already a user registed with that email",
+        msg: "There is already a user registed with that email"+body.email,
       });
     } else {
       const usuario = new Usuario(body);
       await usuario.save();
-      resp.json({
-        msg: "ok",
-        usuario,
-      });
+      resp.json(usuario);
     }
   } catch (err) {
     resp.status(501).json({
       msg: "Erro form server",
     });
   }
-
- 
 };
+
 
 export const updateUsuario = async(req: Request, resp: Response) => {
   const { body } = req;
