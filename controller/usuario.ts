@@ -75,11 +75,25 @@ export const updateUsuario = async(req: Request, resp: Response) => {
 
 };
 
-export const deleteUsuario = (req: Request, resp: Response) => {
+export const deleteUsuario = async(req: Request, resp: Response) => {
   const { id } = req.params;
-
-  resp.json({
-    msg: "postUsuario",
-    id,
+const usuario= await Usuario.findByPk(id);
+try {
+if (!usuario) {
+  return resp.status(400).json({
+    msg: "with don't find user",
   });
+} 
+  await usuario.destroy();
+  resp.json({
+    msg: "ok",
+  });
+
+}catch (err) {
+resp.status(501).json({
+  msg: "Error form server",
+});
+}
+
+
 };
